@@ -189,25 +189,24 @@ public class Poker {
     //判断是什么牌
     private String getHandsCategory(String hands) {
         String handsCategory = "";
-        String[] strArray = hands.split("");
-        int[] number = getHandsNumbers(hands);
+        int[] handsNumbers = getHandsNumbers(hands);
 
 
-        if (isStraightFlush(number, getDistinctNumbers(number).size(), getSuits(strArray).size())) { //五个相邻的数字且花色一样——同花顺
+        if (isStraightFlush(handsNumbers, getDistinctNumbers(handsNumbers).size(), getSuits(hands.split("")).size())) { //五个相邻的数字且花色一样——同花顺
             handsCategory = "StraightFlush";
-        } else if (isStraight(number, getDistinctNumbers(number).size())) { //五个相邻数字——顺子
+        } else if (isStraight(handsNumbers, getDistinctNumbers(handsNumbers).size())) { //五个相邻数字——顺子
             handsCategory = "Straight";
-        } else if (isFlush(getDistinctNumbers(number).size(), getSuits(strArray).size())) { //同一花色——同花
+        } else if (isFlush(getDistinctNumbers(handsNumbers).size(), getSuits(hands.split("")).size())) { //同一花色——同花
             handsCategory = "Flush";
-        } else if (isHighCard(getDistinctNumbers(number).size())) { //五个不相邻的数字——散牌
+        } else if (isHighCard(getDistinctNumbers(handsNumbers).size())) { //五个不相邻的数字——散牌
             handsCategory = "HighCard";
-        } else if (isOnePair(getDistinctNumbers(number).size())) { //一对相同，其余三个数字不同——对子
+        } else if (isOnePair(getDistinctNumbers(handsNumbers).size())) { //一对相同，其余三个数字不同——对子
             handsCategory = "OnePair";
-        }  else if (isTwoPair(number, getDistinctNumbers(number).size())) { //两对
+        }  else if (isTwoPair(handsNumbers, getDistinctNumbers(handsNumbers).size())) { //两对
             handsCategory = "TwoPair";
-        } else if (isThreeOfAKind(getDistinctNumbers(number).size())){ //三个数字相同，另外两个数字不同——三条
+        } else if (isThreeOfAKind(getDistinctNumbers(handsNumbers).size())){ //三个数字相同，另外两个数字不同——三条
             handsCategory = "ThreeOfAKind";
-        } else if (isFourOfAKind(number)) { //三个数字相同，另外两个数字相同——葫芦
+        } else if (isFourOfAKind(handsNumbers)) { //三个数字相同，另外两个数字相同——葫芦
             handsCategory = "FourOfAKind";
         } else { //四个数字相同——铁支
             handsCategory = "FullHouse";
