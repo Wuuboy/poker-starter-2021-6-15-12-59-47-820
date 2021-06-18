@@ -191,45 +191,53 @@ public class Poker {
         String handsCategory = "";
         String[] strArray = hands.split("");
         int[] number = getHandsNumbers(hands);
+
+
+        final int distinctNumbersCount = getDistinctNumbers(number).size();
+        final int suitsCount = getSuits(strArray).size();
+
+        if (number[0] - number[4] == 4 && suitsCount == 1 && distinctNumbersCount == 5) { //五个相邻的数字且花色一样——同花顺
+            handsCategory = "StraightFlush";
+        } else if (number[0] - number[4] == 4 && distinctNumbersCount == 5) { //五个相邻数字——顺子
+            handsCategory = "Straight";
+        } else if (suitsCount == 1 && distinctNumbersCount == 5) { //同一花色——同花
+            handsCategory = "Flush";
+        } else if (distinctNumbersCount == 5) { //五个不相邻的数字——散牌
+            handsCategory = "HighCard";
+        } else if (distinctNumbersCount == 4) { //一对相同，其余三个数字不同——对子
+            handsCategory = "OnePair";
+        }  else if (distinctNumbersCount == 3 && ((number[0] == number[1] && number[2] == number[3]) || (number[1] == number[2] && number[3] == number[4]) || (number[0] == number[1] && number[3] == number[4]))) { //两对
+            handsCategory = "TwoPair";
+        } else if (distinctNumbersCount == 3){ //三个数字相同，另外两个数字不同——三条
+            handsCategory = "ThreeOfAKind";
+        } else if (number[0] != number[1] || number[3] != number[4]) { //三个数字相同，另外两个数字相同——葫芦
+            handsCategory = "FourOfAKind";
+        } else { //四个数字相同——铁支
+            handsCategory = "FullHouse";
+        }
+        return handsCategory;
+    }
+
+    private HashSet<String> getSuits(String[] strArray) {
         int i;
         String[] suit = new String[5];
         for (i = 0; i < 5; i++) {
             suit[i] = strArray[i * 3 + 1];
         }
-        HashSet<Integer> hashSetNumber = new HashSet<Integer>();
-        for (i = 0; i < 5; i++) {
-            hashSetNumber.add(number[i]);
-        }
         HashSet<String> suits = new HashSet<String>();
         for (i = 0; i < 5; i++) {
             suits.add(suit[i]);
         }
-        if (hashSetNumber.size() == 5) {
-            if ((number[0] - number[4] == 4) && (suits.size() == 1) && (hashSetNumber.size() == 5)) { //五个相邻的数字且花色一样——同花顺
-                handsCategory = "StraightFlush";
-            } else if (number[0] - number[4] == 4 && (hashSetNumber.size() == 5)) { //五个相邻数字——顺子
-                handsCategory = "Straight";
-            } else if (suits.size() == 1) { //同一花色——同花
-                handsCategory = "Flush";
-            } else { //五个不相邻的数字——散牌
-                handsCategory = "HighCard";
-            }
-        } else if (hashSetNumber.size() == 4) { //一对相同，其余三个数字不同——对子
-            handsCategory = "OnePair";
-        } else if (hashSetNumber.size() == 3) {
-            if ((number[0] == number[1] && number[2] == number[3]) || (number[1] == number[2] && number[3] == number[4]) || (number[0] == number[1] && number[3] == number[4])) { //两对
-                handsCategory = "TwoPair";
-            } else { //三个数字相同，另外两个数字不同——三条
-                handsCategory = "ThreeOfAKind";
-            }
-        } else {
-            if (number[0] != number[1] || number[3] != number[4]) { //三个数字相同，另外两个数字相同——葫芦
-                handsCategory = "FourOfAKind";
-            } else { //四个数字相同——铁支
-                handsCategory = "FullHouse";
-            }
+        return suits;
+    }
+
+    private HashSet<Integer> getDistinctNumbers(int[] number) {
+        int i;
+        HashSet<Integer> hashSetNumber = new HashSet<Integer>();
+        for (i = 0; i < 5; i++) {
+            hashSetNumber.add(number[i]);
         }
-        return handsCategory;
+        return hashSetNumber;
     }
 
     //数字转化并将其从大到小排序
