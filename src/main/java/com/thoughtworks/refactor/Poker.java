@@ -1,6 +1,8 @@
 package com.thoughtworks.refactor;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Poker {
     public String compareResult(String blackHands, String whiteHands) {
@@ -10,20 +12,20 @@ public class Poker {
         String[] handsCategories = {"StraightFlush", "FourOfAKind", "FullHouse", "Flush", "Straight", "ThreeOfAKind", "TwoPair", "OnePair", "HighCard"};
         int[] blackHandsNumbers = getHandsNumbers(blackHands);
         int[] whiteHandsNumbers = getHandsNumbers(whiteHands);
-        int blackHandsCategoryRank = getHandsCategoryRank(blackHandsCategory);
-        int whiteHandsCategoryRank = getHandsCategoryRank(whiteHandsCategory);
+        int blackHandsCategoryIndex = getHandsCategoryIndex(blackHandsCategory);
+        int whiteHandsCategoryIndex = getHandsCategoryIndex(whiteHandsCategory);
         int[] descendingBlackHandsNumbers = descendingSort(blackHandsNumbers);
         int[] descendingWhiteHandsNumbers = descendingSort(whiteHandsNumbers);
         int[] repeatBlackHandsNumbers = getRepeatNumbers(blackHandsNumbers);
         int[] repeatWhiteHandsNumbers = getRepeatNumbers(whiteHandsNumbers);
         int[] noRepeatBlackHandsNumbers = getNoRepeatNumbers(blackHandsNumbers);
         int[] noRepeatWhiteHandsNumbers = getNoRepeatNumbers(whiteHandsNumbers);
-        if (blackHandsCategoryRank < whiteHandsCategoryRank) {
-            winResult = "black wins - " + handsCategories[blackHandsCategoryRank];
-        } else if (blackHandsCategoryRank > whiteHandsCategoryRank) {
-            winResult = "white wins - " + handsCategories[whiteHandsCategoryRank];
+        if (blackHandsCategoryIndex < whiteHandsCategoryIndex) {
+            winResult = "black wins - " + handsCategories[blackHandsCategoryIndex];
+        } else if (blackHandsCategoryIndex > whiteHandsCategoryIndex) {
+            winResult = "white wins - " + handsCategories[whiteHandsCategoryIndex];
         } else {
-            if (blackHandsCategoryRank == 0) { //同花顺
+            if (blackHandsCategoryIndex == 0) { //同花顺
                 if (blackHandsNumbers[0] < whiteHandsNumbers[0]) {
                     String sig = showCard(whiteHandsNumbers[0]);
                     winResult = "white wins - high card:" + sig;
@@ -33,7 +35,7 @@ public class Poker {
                 } else {
                     winResult = "tie";
                 }
-            } else if (blackHandsCategoryRank == 1) { //铁支
+            } else if (blackHandsCategoryIndex == 1) { //铁支
                 if (descendingBlackHandsNumbers[0] < descendingWhiteHandsNumbers[0]) {
                     String sig = showCard(descendingWhiteHandsNumbers[0]);
                     winResult = "white wins - high card:" + sig;
@@ -41,7 +43,7 @@ public class Poker {
                     String sig = showCard(descendingBlackHandsNumbers[0]);
                     winResult = "black wins - high card:" + sig;
                 }
-            } else if (blackHandsCategoryRank == 2) { //葫芦
+            } else if (blackHandsCategoryIndex == 2) { //葫芦
                 if (descendingBlackHandsNumbers[0] < descendingWhiteHandsNumbers[0]) {
                     String sig = showCard(descendingWhiteHandsNumbers[0]);
                     winResult = "white wins - high card:" + sig;
@@ -49,7 +51,7 @@ public class Poker {
                     String sig = showCard(descendingBlackHandsNumbers[0]);
                     winResult = "black wins - high card:" + sig;
                 }
-            } else if (blackHandsCategoryRank == 3) { //同花
+            } else if (blackHandsCategoryIndex == 3) { //同花
                 for (int i = 0; i < 5; i++) {
                     if (blackHandsNumbers[i] < whiteHandsNumbers[i]) {
                         String sig = showCard(whiteHandsNumbers[i]);
@@ -63,7 +65,7 @@ public class Poker {
                         winResult = "tie";
                     }
                 }
-            } else if (blackHandsCategoryRank == 4) { //顺子
+            } else if (blackHandsCategoryIndex == 4) { //顺子
                 if (blackHandsNumbers[0] < whiteHandsNumbers[0]) {
                     String sig = showCard(whiteHandsNumbers[0]);
                     winResult = "white wins - high card:" + sig;
@@ -73,7 +75,7 @@ public class Poker {
                 } else {
                     winResult = "tie";
                 }
-            } else if (blackHandsCategoryRank == 5) { //三条
+            } else if (blackHandsCategoryIndex == 5) { //三条
                 if (repeatBlackHandsNumbers[0] < repeatWhiteHandsNumbers[0]) {
                     String sig = showCard(repeatWhiteHandsNumbers[0]);
                     winResult = "white wins - high card:" + sig;
@@ -81,7 +83,7 @@ public class Poker {
                     String sig = showCard(repeatBlackHandsNumbers[0]);
                     winResult = "black wins - high card:" + sig;
                 }
-            } else if (blackHandsCategoryRank == 6) { //两对
+            } else if (blackHandsCategoryIndex == 6) { //两对
                 for (int i = 0; i < 2; i++) {
                     if (repeatBlackHandsNumbers[i] < repeatWhiteHandsNumbers[i]) {
                         String sig = showCard(repeatWhiteHandsNumbers[i]);
@@ -104,7 +106,7 @@ public class Poker {
                         winResult = "tie";
                     }
                 }
-            } else if (blackHandsCategoryRank == 7) { //对子
+            } else if (blackHandsCategoryIndex == 7) { //对子
                 if (repeatBlackHandsNumbers[0] < repeatWhiteHandsNumbers[0]) {
                     String sig = showCard(repeatWhiteHandsNumbers[0]);
                     winResult = "white wins - high card:" + sig;
@@ -146,11 +148,18 @@ public class Poker {
     }
 
     private int[] getNoRepeatNumbers(int[] handsNumbers) {
-        return noOrRepeatNumber(handsNumbers, 1);
+        return IntStream.of(handsNumbers)
+                .filter(number -> Collections.frequency(Arrays.stream(handsNumbers).boxed().collect(Collectors.toList()), number) == 1)
+                .toArray();
     }
 
     private int[] getRepeatNumbers(int[] handsNumbers) {
-        return noOrRepeatNumber(handsNumbers, 0);
+        return IntStream.of(handsNumbers)
+                .filter(number -> Collections.frequency(Arrays.stream(handsNumbers)
+                        .boxed()
+                        .collect(Collectors.toList()), number) > 1)
+                .distinct()
+                .toArray();
     }
 
     private String showCard(int cardNumber) {
@@ -159,89 +168,14 @@ public class Poker {
     }
 
     private int[] descendingSort(int[] handsNumbers) {
-        Map<Integer, Integer> map = new HashMap<Integer, Integer>();
-        for (int handsNumber : handsNumbers) {
-            map.merge(handsNumber, 1, Integer::sum);
-        }
-        List<Map.Entry<Integer, Integer>> list = new ArrayList<Map.Entry<Integer, Integer>>(map.entrySet());
-
-
-        Collections.sort(list, new Comparator<Map.Entry<Integer, Integer>>() {
-            public int compare(Map.Entry<Integer, Integer> arg0, Map.Entry<Integer, Integer> arg1) {
-                return arg1.getValue().compareTo(arg0.getValue());
-            }
-        });
-
-        int[] arrayresult = new int[list.size()];
-        int i = 0;
-        for (Map.Entry<Integer, Integer> entry : list) {
-            arrayresult[i] = entry.getKey();
-            i++;
-        }
-        return arrayresult;
+        return IntStream.of(handsNumbers)
+                .boxed()
+                .sorted(Comparator.reverseOrder())
+                .mapToInt(i -> i)
+                .toArray();
     }
 
-    //先获得数组中每个元素出现的次数，然后再进行计算出现次数大于1的和出现次数等于1的
-    private int[] noOrRepeatNumber(int[] handsNumbers, int flag) {
-        Map<Integer, Integer> map = new HashMap<Integer, Integer>();
-        for (int i = 0; i < handsNumbers.length; i++) {
-            if (map.get(handsNumbers[i]) != null) {
-                map.put(handsNumbers[i], map.get(handsNumbers[i]) + 1);
-            } else {
-                map.put(handsNumbers[i], 1);
-            }
-        }
-        List<Map.Entry<Integer, Integer>> list = new ArrayList<Map.Entry<Integer, Integer>>();
-        list.addAll(map.entrySet());
-        Collections.sort(list, new Comparator<Map.Entry<Integer, Integer>>() {
-            public int compare(Map.Entry<Integer, Integer> arg0, Map.Entry<Integer, Integer> arg1) {
-                return arg1.getValue().compareTo(arg0.getValue());
-            }
-        });
-        int[] repeatnumber = new int[list.size()];
-        int[] norepeatnumber = new int[list.size()];
-        int i = 0;
-        if (flag == 0) {
-            for (Map.Entry<Integer, Integer> entry : list) {
-                if (entry.getValue() > 1) {
-                    repeatnumber[i] = entry.getKey();
-                    i++;
-                }
-            }
-        } else {
-            for (Map.Entry<Integer, Integer> entry : list) {
-                if (entry.getValue() == 1) {
-                    norepeatnumber[i] = entry.getKey();
-                    i++;
-                }
-            }
-        }
-        HashSet<Integer> hashSet = new HashSet<Integer>();
-        if (flag == 0) {
-            for (i = 0; i < repeatnumber.length; i++) {
-                hashSet.add(repeatnumber[i]);
-            }
-        } else {
-            for (i = 0; i < norepeatnumber.length; i++) {
-                hashSet.add(norepeatnumber[i]);
-            }
-        }
-        hashSet.remove(0);
-        int[] result = new int[hashSet.size()];
-        i = 0;
-        Iterator<Integer> iterator = hashSet.iterator();
-        while (iterator.hasNext()) {
-            result[i] = iterator.next();
-            i++;
-        }
-        int[] reResult = new int[result.length];
-        for (i = 0; i < result.length; i++) {
-            reResult[i] = result[result.length - i - 1];
-        }
-        return reResult;
-    }
-
-    private int getHandsCategoryRank(String handsCategory) {
+    private int getHandsCategoryIndex(String handsCategory) {
         int index = -1;
         String[] handsCategories = {"StraightFlush", "FourOfAKind", "FullHouse", "Flush", "Straight", "ThreeOfAKind", "TwoPair", "OnePair", "HighCard"};
         for (int i = 0; i < 9; i++) {
@@ -300,38 +234,48 @@ public class Poker {
 
     //数字转化并将其从大到小排序
     private int[] getHandsNumbers(String hands) {
-        int[] number = new int[5];
-        String[] strArray = hands.split("");
-        int i;
-        for (i = 0; i < 5; i++) {
-            String c = strArray[i * 3];
-            switch (c) {
-                case "T":
-                    number[i] = 10;
-                    break;
-                case "J":
-                    number[i] = 11;
-                    break;
-                case "Q":
-                    number[i] = 12;
-                    break;
-                case "K":
-                    number[i] = 13;
-                    break;
-                case "A":
-                    number[i] = 14;
-                    break;
-                default:
-                    number[i] = Integer.valueOf(c);
-                    break;
-            }
-        }
+        int[] cardNumbers = getCardNumbers(hands);
+        return descendingSort(cardNumbers);
+    }
 
-        Arrays.sort(number);
-        int[] renumber = new int[number.length];
-        for (i = 0; i < number.length; i++) {
-            renumber[i] = number[number.length - i - 1];
+    private int[] getCardNumbers(String hands) {
+        return getCardNumberViews(hands).stream()
+                .mapToInt(cardNumberView -> getCardNumber(cardNumberView))
+                .toArray();
+    }
+
+    private List<String> getCardNumberViews(String hands) {
+        List<String> cardNumberViews = new ArrayList<>();
+        String[] strArray = hands.split("");
+        for (int i = 0; i < 5; i++) {
+            String cardNumberView = strArray[i * 3];
+            cardNumberViews.add(cardNumberView);
         }
-        return renumber;
+        return cardNumberViews;
+    }
+
+    private int getCardNumber(String cardNumberView) {
+        int cardNumber;
+        switch (cardNumberView) {
+            case "T":
+                cardNumber = 10;
+                break;
+            case "J":
+                cardNumber = 11;
+                break;
+            case "Q":
+                cardNumber = 12;
+                break;
+            case "K":
+                cardNumber = 13;
+                break;
+            case "A":
+                cardNumber = 14;
+                break;
+            default:
+                cardNumber = Integer.valueOf(cardNumberView);
+                break;
+        }
+        return cardNumber;
     }
 }
