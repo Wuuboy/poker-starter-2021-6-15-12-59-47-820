@@ -193,22 +193,19 @@ public class Poker {
         int[] number = getHandsNumbers(hands);
 
 
-        final int distinctNumbersCount = getDistinctNumbers(number).size();
-        final int suitsCount = getSuits(strArray).size();
-
-        if (isStraightFlush(number, distinctNumbersCount, suitsCount)) { //五个相邻的数字且花色一样——同花顺
+        if (isStraightFlush(number, getDistinctNumbers(number).size(), getSuits(strArray).size())) { //五个相邻的数字且花色一样——同花顺
             handsCategory = "StraightFlush";
-        } else if (isStraight(number, distinctNumbersCount)) { //五个相邻数字——顺子
+        } else if (isStraight(number, getDistinctNumbers(number).size())) { //五个相邻数字——顺子
             handsCategory = "Straight";
-        } else if (isFlush(distinctNumbersCount, suitsCount)) { //同一花色——同花
+        } else if (isFlush(getDistinctNumbers(number).size(), getSuits(strArray).size())) { //同一花色——同花
             handsCategory = "Flush";
-        } else if (isHighCard(distinctNumbersCount)) { //五个不相邻的数字——散牌
+        } else if (isHighCard(getDistinctNumbers(number).size())) { //五个不相邻的数字——散牌
             handsCategory = "HighCard";
-        } else if (isOnePair(distinctNumbersCount)) { //一对相同，其余三个数字不同——对子
+        } else if (isOnePair(getDistinctNumbers(number).size())) { //一对相同，其余三个数字不同——对子
             handsCategory = "OnePair";
-        }  else if (isTwoPair(number, distinctNumbersCount)) { //两对
+        }  else if (isTwoPair(number, getDistinctNumbers(number).size())) { //两对
             handsCategory = "TwoPair";
-        } else if (isThreeOfAKind(distinctNumbersCount)){ //三个数字相同，另外两个数字不同——三条
+        } else if (isThreeOfAKind(getDistinctNumbers(number).size())){ //三个数字相同，另外两个数字不同——三条
             handsCategory = "ThreeOfAKind";
         } else if (isFourOfAKind(number)) { //三个数字相同，另外两个数字相同——葫芦
             handsCategory = "FourOfAKind";
