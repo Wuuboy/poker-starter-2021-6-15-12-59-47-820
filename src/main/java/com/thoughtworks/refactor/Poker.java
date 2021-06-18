@@ -8,8 +8,8 @@ public class Poker {
         String blackCardType = getCardType(blackPlayerCard);
         String whiteCardType = getCardType(whitePlayerCard);
         String[] cardTypes = {"StraightFlush", "FourOfAKind", "FullHouse", "Flush", "Straight", "ThreeOfAKind", "TwoPair", "OnePair", "HighCard"};
-        int[] blackCardNumbers = strNumber(blackPlayerCard);
-        int[] whiteCardNumbers = strNumber(whitePlayerCard);
+        int[] blackCardNumbers = getCardNumbers(blackPlayerCard);
+        int[] whiteCardNumbers = getCardNumbers(whitePlayerCard);
         int blackIndex = judgeIndex(blackCardType);
         int whiteIndex = judgeIndex(whiteCardType);
         int[] blackArraySort = arraySort(blackCardNumbers);
@@ -250,7 +250,7 @@ public class Poker {
     private String getCardType(String str) {
         String type = "";
         String[] strArray = str.split("");
-        int[] number = strNumber(str);
+        int[] number = getCardNumbers(str);
         int i;
         String[] color = new String[5];
         for (i = 0; i < 5; i++) {
@@ -293,7 +293,7 @@ public class Poker {
     }
 
     //数字转化并将其从大到小排序
-    private int[] strNumber(String str) {
+    private int[] getCardNumbers(String str) {
         int[] number = new int[5];
         String[] strArray = str.split("");
         int i;
