@@ -12,8 +12,8 @@ public class Poker {
         int[] whiteCardNumbers = getCardNumbers(whitePlayerCard);
         int blackCardIndex = getCardIndexes(blackCardType);
         int whiteCardIndex = getCardIndexes(whiteCardType);
-        int[] blackArraySort = sortCradNumbers(blackCardNumbers);
-        int[] whiteArraySort = sortCradNumbers(whiteCardNumbers);
+        int[] blackSortedNumbers = sortCradNumbers(blackCardNumbers);
+        int[] whiteSortedNumbers = sortCradNumbers(whiteCardNumbers);
         int[] blackRepeat = noOrRepeatNumber(blackCardNumbers, 0);
         int[] whiteRepeat = noOrRepeatNumber(whiteCardNumbers, 0);
         int[] blackNoRepeat = noOrRepeatNumber(blackCardNumbers, 1);
@@ -34,19 +34,19 @@ public class Poker {
                     winResult = "tie";
                 }
             } else if (blackCardIndex == 1) { //铁支
-                if (blackArraySort[0] < whiteArraySort[0]) {
-                    String sig = intNumber(whiteArraySort[0]);
+                if (blackSortedNumbers[0] < whiteSortedNumbers[0]) {
+                    String sig = intNumber(whiteSortedNumbers[0]);
                     winResult = "white wins - high card:" + sig;
                 } else {
-                    String sig = intNumber(blackArraySort[0]);
+                    String sig = intNumber(blackSortedNumbers[0]);
                     winResult = "black wins - high card:" + sig;
                 }
             } else if (blackCardIndex == 2) { //葫芦
-                if (blackArraySort[0] < whiteArraySort[0]) {
-                    String sig = intNumber(whiteArraySort[0]);
+                if (blackSortedNumbers[0] < whiteSortedNumbers[0]) {
+                    String sig = intNumber(whiteSortedNumbers[0]);
                     winResult = "white wins - high card:" + sig;
                 } else {
-                    String sig = intNumber(blackArraySort[0]);
+                    String sig = intNumber(blackSortedNumbers[0]);
                     winResult = "black wins - high card:" + sig;
                 }
             } else if (blackCardIndex == 3) { //同花
