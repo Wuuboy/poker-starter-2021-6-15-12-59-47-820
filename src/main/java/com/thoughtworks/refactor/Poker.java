@@ -196,26 +196,58 @@ public class Poker {
         final int distinctNumbersCount = getDistinctNumbers(number).size();
         final int suitsCount = getSuits(strArray).size();
 
-        if (number[0] - number[4] == 4 && suitsCount == 1 && distinctNumbersCount == 5) { //五个相邻的数字且花色一样——同花顺
+        if (isStraightFlush(number, distinctNumbersCount, suitsCount)) { //五个相邻的数字且花色一样——同花顺
             handsCategory = "StraightFlush";
-        } else if (number[0] - number[4] == 4 && distinctNumbersCount == 5) { //五个相邻数字——顺子
+        } else if (isStraight(number, distinctNumbersCount)) { //五个相邻数字——顺子
             handsCategory = "Straight";
-        } else if (suitsCount == 1 && distinctNumbersCount == 5) { //同一花色——同花
+        } else if (isFlush(distinctNumbersCount, suitsCount)) { //同一花色——同花
             handsCategory = "Flush";
-        } else if (distinctNumbersCount == 5) { //五个不相邻的数字——散牌
+        } else if (isHighCard(distinctNumbersCount)) { //五个不相邻的数字——散牌
             handsCategory = "HighCard";
-        } else if (distinctNumbersCount == 4) { //一对相同，其余三个数字不同——对子
+        } else if (isOnePair(distinctNumbersCount)) { //一对相同，其余三个数字不同——对子
             handsCategory = "OnePair";
-        }  else if (distinctNumbersCount == 3 && ((number[0] == number[1] && number[2] == number[3]) || (number[1] == number[2] && number[3] == number[4]) || (number[0] == number[1] && number[3] == number[4]))) { //两对
+        }  else if (isTwoPair(number, distinctNumbersCount)) { //两对
             handsCategory = "TwoPair";
-        } else if (distinctNumbersCount == 3){ //三个数字相同，另外两个数字不同——三条
+        } else if (isThreeOfAKind(distinctNumbersCount)){ //三个数字相同，另外两个数字不同——三条
             handsCategory = "ThreeOfAKind";
-        } else if (number[0] != number[1] || number[3] != number[4]) { //三个数字相同，另外两个数字相同——葫芦
+        } else if (isFourOfAKind(number)) { //三个数字相同，另外两个数字相同——葫芦
             handsCategory = "FourOfAKind";
         } else { //四个数字相同——铁支
             handsCategory = "FullHouse";
         }
         return handsCategory;
+    }
+
+    private boolean isFourOfAKind(int[] number) {
+        return number[0] != number[1] || number[3] != number[4];
+    }
+
+    private boolean isThreeOfAKind(int distinctNumbersCount) {
+        return distinctNumbersCount == 3;
+    }
+
+    private boolean isTwoPair(int[] number, int distinctNumbersCount) {
+        return distinctNumbersCount == 3 && ((number[0] == number[1] && number[2] == number[3]) || (number[1] == number[2] && number[3] == number[4]) || (number[0] == number[1] && number[3] == number[4]));
+    }
+
+    private boolean isOnePair(int distinctNumbersCount) {
+        return distinctNumbersCount == 4;
+    }
+
+    private boolean isHighCard(int distinctNumbersCount) {
+        return distinctNumbersCount == 5;
+    }
+
+    private boolean isFlush(int distinctNumbersCount, int suitsCount) {
+        return suitsCount == 1 && distinctNumbersCount == 5;
+    }
+
+    private boolean isStraight(int[] number, int distinctNumbersCount) {
+        return number[0] - number[4] == 4 && distinctNumbersCount == 5;
+    }
+
+    private boolean isStraightFlush(int[] number, int distinctNumbersCount, int suitsCount) {
+        return number[0] - number[4] == 4 && suitsCount == 1 && distinctNumbersCount == 5;
     }
 
     private HashSet<String> getSuits(String[] strArray) {
